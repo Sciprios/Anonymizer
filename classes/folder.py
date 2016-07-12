@@ -17,8 +17,6 @@ class Folder(object):
         self.folders = []   # Folders inside this folder.
         self.absolute_path = abs_path   # Path of this folder.
 
-        #Extract 
-
     def _extract_self(self):
         """ Extracts this folder's contents. """
         print("\033[94m=== Identifying contents for folder: " + self.name + " \033[0m")
@@ -37,5 +35,10 @@ class Folder(object):
         self.xml_files = []
         for folder in next(os.walk(self.absolute_path))[1]:
             print("=== Found: " + folder)
-            self.folders.append(Folder(self.absolute_path + "{}/".format(folder)))
+            self.folders.append(Folder(self.absolute_path + "\\{}".format(folder)))
         print("\033[93m=== Identified {} folder(s).\033[0m".format(len(self.folders)))
+
+        # Extract inner folders.
+        print("\033[93m=== Extracting {} folder(s): \033[0m".format(len(self.folders)))
+        for folder in self.folders:
+            folder._extract_self()
