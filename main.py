@@ -15,5 +15,7 @@ except Exception:
     exit()
 
 if __name__ == '__main__':  # If this module is being executed.
-    anonimizer = Anonymizer("TestStudy",os.getcwd() + "\Data")
+    # Get study name
+    study = input("Please enter the study name: ")
+    anonimizer = Anonymizer(study, os.getcwd() + "\Data")
     anonimizer.anonymize_data()
