@@ -31,6 +31,7 @@ class Anonymizer(object):
         self._identify_files()
         self._patch_folder_names()
         self._patch_file_names()
+        self._patch_file_content()
 
     def _identify_patient_folders(self):
         """ Identifies patient folders within the Data folder. """
@@ -63,3 +64,9 @@ class Anonymizer(object):
         printer.print_blue("=== Anonymizing file names")
         for folder in self.participant_folders:
             folder._anonymize_file_names(random.randint(1000000, 9999999))
+
+    def _patch_file_content(self):
+        """ Calls for folders to patch their XML file content """
+        printer.print_blue("=== Anonymizing file content")
+        for folder in self.participant_folders:
+            folder._anonymize_file_contents()

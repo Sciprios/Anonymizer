@@ -71,27 +71,26 @@ class Folder(object):
 
     def _anonymize_file_contents(self):
         """ Cycles through and anonymizes file contents. """
-        printer.print_blue("=== Anonymizing file contents in folder: " + self.name)
+        printer.print_yellow("Anonymizing file contents in folder: " + self.name)
         for file in self.xml_files:
             self._anonymize_file(file)
-        printer.print_blue("=== Completed anonymization for file contents within folder: " + self.name)
 
-    def _anonymize_file(self, file_name):
+    def _anonymize_file(self, file_path):
         """ Anonymizes the file name. """
         try:
-            doc = parse(self.absolute_path + "\\{}.xml".format(file_name))
+            doc = parse(file_path)
             root_node = doc.getroot()
             patient_node = root_node.find("PATIENT")
-            patient_node.find("LAST_NAME").text = "N/A"
-            patient_node.find("GIVEN_NAME").text = "N/A"
-            patient_node.find("MIDDLE_NAME").text = "N/A"
-            patient_node.find("NAME_PREFIX").text = "N/A"
-            patient_node.find("NAME_SUFFIX").text = "N/A"
-            patient_node.find("FULL_NAME").text = "N/A"
-            patient_node.find("PATIENT_ID").text = "N/A"
+            patient_node.find("LAST_NAME").text = ""
+            patient_node.find("GIVEN_NAME").text = ""
+            patient_node.find("MIDDLE_NAME").text = ""
+            patient_node.find("NAME_PREFIX").text = ""
+            patient_node.find("NAME_SUFFIX").text = ""
+            patient_node.find("FULL_NAME").text = ""
+            patient_node.find("PATIENT_ID").text = ""
             patient_node.find("BIRTH_DATE").text = patient_node.find("BIRTH_DATE").text[:-6] + "-01-01"
 
-            doc.write(self.absolute_path + "\\{}.xml".format(file_name))
+            doc.write(file_path)
         except Exception as e:
             printer.print_red("ERROR: Could not modify file - " + file_name)
             print(e)
