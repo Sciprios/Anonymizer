@@ -8,6 +8,7 @@ except Exception:
 
 try:
     import os
+    import random
 except Exception as e:
     printer.print_red("Error importing 'os' library.. Exiting.")
     exit()
@@ -20,7 +21,7 @@ class Folder(object):
         """
         Initializes a Folder object with the given
         absolute path and empty contents. """
-        contents = abs_path.split('/')  # Get a pretty name for the folder.
+        contents = abs_path.split('\\')  # Get a pretty name for the folder.
         self.name = contents[len(contents) - 1]  # This folder's name.
         self.xml_files = []  # Names of any xml files within this folder.
         self.folders = []   # Folders inside this folder.
