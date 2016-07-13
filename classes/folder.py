@@ -26,14 +26,12 @@ class Folder(object):
         self.name = contents[len(contents) - 1]  # This folder's name.
         self.xml_files = []  # Names of any xml files within this folder.
         self.tif_files = []  # Names of any tif files within this folder.
-        self.folders = []   # Folders inside this folder.
         self.absolute_path = abs_path   # Path of this folder.
 
     def _extract_self(self):
         """ Extracts this folder's contents. """
         printer.print_blue("=== Identifying contents for folder: " + self.name)
         self.__identify_files()
-        self.__identify_folders()
         printer.print_blue("=== Completed identification for folder: " + self.name)
 
     def _anonymize_folder(self):
@@ -52,10 +50,6 @@ class Folder(object):
                 self.absolute_path = new_path
         except OSError:
             printer.print_red("ERROR: Could not rename directory - " + self.name)
-        finally:
-            # Iterate through children
-            for folder in self.folders:
-                folder._anonymize_folder()
 
         printer.print_blue("=== Completed anonymization of folder: " + self.name)
 
@@ -96,10 +90,6 @@ class Folder(object):
         self.xml_files = new_xmls
         self.tif_files = new_tifs
 
-        # Iterate through children
-        for folder in self.folders:
-            folder._anonymize_file_names()
-
         printer.print_blue("=== Completed anonymization for file names within folder: " + self.name)
 
     def _anonymize_file_contents(self):
@@ -107,8 +97,6 @@ class Folder(object):
         printer.print_blue("=== Anonymizing file contents in folder: " + self.name)
         for file in self.xml_files:
             self._anonymize_file(file)
-        for folder in self.folders:
-            folder._anonymize_file_contents()
         printer.print_blue("=== Completed anonymization for file contents within folder: " + self.name)
 
     def _anonymize_file(self, file_name):
@@ -144,19 +132,3 @@ class Folder(object):
             printer.print_yellow("=== Identified {} xml file(s) and {} tif file(s).".format(len(self.xml_files), len(self.tif_files)))
         except StopIteration:
             printer.print_yellow("=== No XML files identified.")
-
-    def __identify_folders(self):
-        """ Identifies any folders within this folder. """
-        printer.print_yellow("=== Identifying folders.")
-        self.folders = []
-        try:
-            for folder in next(os.walk(self.absolute_path))[1]:
-                self.folders.append(Folder(self.absolute_path + "\\{}".format(folder)))
-            printer.print_yellow("=== Identified {} folder(s).".format(len(self.folders)))
-
-            # Extract inner folders.
-            printer.print_yellow("=== Extracting {} folder(s):".format(len(self.folders)))
-            for folder in self.folders:
-                folder._extract_self()
-        except StopIteration:
-            printer.print_yellow("=== No folders identified.")
