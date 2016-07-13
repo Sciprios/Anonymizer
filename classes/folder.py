@@ -1,8 +1,15 @@
 """ File contains any classes used by the service. """
 try:
+    from classes.colours import ColourPrint
+    printer = ColourPrint()
+except Exception:
+    print("\033[91mError importing 'colours' library.. Exiting.")
+    exit()
+
+try:
     import os
 except Exception as e:
-    print("\033[91mError importing 'os' library.. Exiting.")
+    printer.print_red("Error importing 'os' library.. Exiting.")
     exit()
 
 
@@ -21,34 +28,35 @@ class Folder(object):
 
     def _extract_self(self):
         """ Extracts this folder's contents. """
-        print("\033[94m=== Identifying contents for folder: " + self.name + "\033[0m")
+        printer.print_blue("=== Identifying contents for folder: " + self.name)
+        self.__identify_files()
+        self.__identify_folders()
+        printer.print_blue("=== Completed identification for folder: " + self.name)
 
-        # Identify XML files.
-        print("\033[93m=== Identifying XML files: \033[0m")
+    def __identify_files(self):
+        """ Identifies any xml files to be used. """
+        printer.print_yellow("=== Identifying XML files.")
         self.xml_files = []
         try:
             for file in next(os.walk(self.absolute_path))[2]:
                 if file.endswith(".xml"):
-                    print("=== Found: " + file)
                     self.xml_files.append(file)
-            print("\033[93m=== Identified {} xml file(s).\033[0m".format(len(self.xml_files)))
+            printer.print_yellow("=== Identified {} xml file(s).".format(len(self.xml_files)))
         except StopIteration:
-            print("\033[93m=== No XML files identified.\033[0m")
+            printer.print_yellow("=== No XML files identified.")
 
-        # Identify folders.
-        print("\033[93m=== Identifying folders: \033[0m")
+    def __identify_folders(self):
+        """ Identifies any folders within this folder. """
+        printer.print_yellow("=== Identifying folders.")
         self.xml_files = []
         try:
             for folder in next(os.walk(self.absolute_path))[1]:
-                print("=== Found: " + folder)
                 self.folders.append(Folder(self.absolute_path + "\\{}".format(folder)))
-            print("\033[93m=== Identified {} folder(s).\033[0m".format(len(self.folders)))
+            printer.print_yellow("=== Identified {} folder(s).".format(len(self.folders)))
 
             # Extract inner folders.
-            print("\033[93m=== Extracting {} folder(s): \033[0m".format(len(self.folders)))
+            printer.print_yellow("=== Extracting {} folder(s):".format(len(self.folders)))
             for folder in self.folders:
                 folder._extract_self()
         except StopIteration:
-            print("\033[93m=== No folders identified.\033[0m")
-        
-        print("\033[94m=== Completed identification for folder: " + self.name + "\033[0m")
+            printer.print_yellow("=== No folders identified.")
