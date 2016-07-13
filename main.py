@@ -27,13 +27,13 @@ if __name__ == '__main__':  # If this module is being executed.
     printer.print_green("===== Finished Identification =====")
 
     printer.print_green("===== Beginning Folder Anonymization =====")
-    folder._anonymize_folders()
+    folder._anonymize_folder()
     printer.print_green("===== Finished Folder Anonymization =====")
 
     printer.print_green("===== Beginning File Anonymization =====")
-    folder._anonymize_files()
+    folder._anonymize_file_names()
     printer.print_green("===== Finished File Anonymization =====")
 
     printer.print_green("===== Beginning Contents Anonymization =====")
-    printer.print_red("=== NOT IMPLEMENTED YET")
+    folder._anonymize_file_contents()
     printer.print_green("===== Finished Contents Anonymization =====")
