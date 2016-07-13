@@ -9,6 +9,7 @@ except Exception:
 try:
     import os
     import random
+    from xml.etree.ElementTree import parse, Element
 except Exception as e:
     printer.print_red("Error importing 'os' library.. Exiting.")
     exit()
@@ -35,7 +36,7 @@ class Folder(object):
         self.__identify_folders()
         printer.print_blue("=== Completed identification for folder: " + self.name)
 
-    def _anonymize_folders(self):
+    def _anonymize_folder(self):
         """ Anonymizes the name of this folder and invokes its children to do so. """
         printer.print_blue("=== Anonymizing folder: " + self.name)
 
@@ -54,16 +55,17 @@ class Folder(object):
         finally:
             # Iterate through children
             for folder in self.folders:
-                folder._anonymize_folders()
+                folder._anonymize_folder()
 
         printer.print_blue("=== Completed anonymization of folder: " + self.name)
 
-    def _anonymize_files(self):
+    def _anonymize_file_names(self):
         """
         Anonymizes the name of any XML and TIFF files within this folder
         and invokes its children to do the same. """
-        printer.print_blue("=== Anonymizing files in folder: " + self.name)
+        printer.print_blue("=== Anonymizing file names in folder: " + self.name)
         new_xmls = []
+        new_tifs = []
         current_int = random.randrange(1000000, 9999999)
         # Anonymize the xml files
         for file_name in self.xml_files:
@@ -86,16 +88,48 @@ class Folder(object):
                         old_path = self.absolute_path + "\\{}".format(file_name)
                         new_path = self.absolute_path + "\\{}.tif".format(new_name)
                         os.rename(old_path, new_path)  # Do the rename
-                        new_xmls.append(new_name)
+                        new_tifs.append(new_name)
                         current_int = current_int + 1
                     except OSError:
                         printer.print_red("ERROR: Could not rename file - " + old_path)
 
+        self.xml_files = new_xmls
+        self.tif_files = new_tifs
+
         # Iterate through children
         for folder in self.folders:
-            folder._anonymize_files()
+            folder._anonymize_file_names()
 
-        printer.print_blue("=== Completed anonymization for files within folder: " + self.name)
+        printer.print_blue("=== Completed anonymization for file names within folder: " + self.name)
+
+    def _anonymize_file_contents(self):
+        """ Cycles through and anonymizes file contents. """
+        printer.print_blue("=== Anonymizing file contents in folder: " + self.name)
+        for file in self.xml_files:
+            self._anonymize_file(file)
+        for folder in self.folders:
+            folder._anonymize_file_contents()
+        printer.print_blue("=== Completed anonymization for file contents within folder: " + self.name)
+
+    def _anonymize_file(self, file_name):
+        """ Anonymizes the file name. """
+        try:
+            doc = parse(self.absolute_path + "\\{}.xml".format(file_name))
+            root_node = doc.getroot()
+            patient_node = root_node.find("PATIENT")
+            patient_node.find("LAST_NAME").text = "N/A"
+            patient_node.find("GIVEN_NAME").text = "N/A"
+            patient_node.find("MIDDLE_NAME").text = "N/A"
+            patient_node.find("NAME_PREFIX").text = "N/A"
+            patient_node.find("NAME_SUFFIX").text = "N/A"
+            patient_node.find("FULL_NAME").text = "N/A"
+            patient_node.find("PATIENT_ID").text = "N/A"
+            patient_node.find("BIRTH_DATE").text = patient_node.find("BIRTH_DATE").text[:-6] + "-01-01"
+
+            doc.write(self.absolute_path + "\\{}.xml".format(file_name))
+        except Exception as e:
+            printer.print_red("ERROR: Could not modify file - " + file_name)
+            print(e)
 
     def __identify_files(self):
         """ Identifies any xml files to be used. """
