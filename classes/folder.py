@@ -23,8 +23,7 @@ class Folder(object):
         absolute path and empty contents. """
         contents = abs_path.split('\\')  # Get a pretty name for the folder.
         self.name = contents[len(contents) - 1]  # This folder's name.
-        self.xml_files = []  # Names of any xml files within this folder.
-        self.tif_files = []  # Names of any tif files within this folder.
+        self.files = []  # Names of any xml files within this folder.
         self.absolute_path = abs_path   # Path of this folder.
 
     def _extract_self(self):
@@ -46,44 +45,29 @@ class Folder(object):
         except OSError:
             printer.print_red("ERROR: Could not rename directory - " + self.name)
 
-    def _anonymize_file_names(self):
+    def _anonymize_file_names(self, seed):
         """
         Anonymizes the name of any XML and TIFF files within this folder
         and invokes its children to do the same. """
-        printer.print_blue("=== Anonymizing file names in folder: " + self.name)
+        printer.print_yellow("Anonymizing contents for: " + self.name)
         new_xmls = []
         new_tifs = []
-        current_int = random.randrange(1000000, 9999999)
-        # Anonymize the xml files
-        for file_name in self.xml_files:
-            try:
-                # Get the original path excluding the original file name.
-                new_name = str(current_int)
-                old_path = self.absolute_path + "\\{}".format(file_name)
-                new_path = self.absolute_path + "\\{}.xml".format(new_name)
-                os.rename(old_path, new_path)  # Do the rename
-                new_xmls.append(new_name)
-                current_int = current_int + 1
-            except OSError:
-                printer.print_red("ERROR: Could not rename file - " + old_path)
+        count = seed
 
-        # Anonymize the tif files
-        for file_name in self.tif_files:
-                    try:
-                        # Get the original path excluding the original file name.
-                        new_name = str(current_int)
-                        old_path = self.absolute_path + "\\{}".format(file_name)
-                        new_path = self.absolute_path + "\\{}.tif".format(new_name)
-                        os.rename(old_path, new_path)  # Do the rename
-                        new_tifs.append(new_name)
-                        current_int = current_int + 1
-                    except OSError:
-                        printer.print_red("ERROR: Could not rename file - " + old_path)
+        for file_name in self.files:    # Assuming every xml has a tif.
+            try:
+                new_location = self.absolute_path + "\\{}_{}".format(self.name, count)
+                os.rename(self.absolute_path + "\\{}.xml".format(file_name), new_location + ".xml")
+                os.rename(self.absolute_path + "\\{}.tif".format(file_name), new_location + ".tif")
+                new_xmls.append(new_location + ".xml")
+                new_tifs.append(new_location + ".tif")
+                count = count + 1
+            except OSError as e:
+                print(e)
+                printer.print_red("ERROR: Could not rename a file within {}: {}".format(self.name, file_name))
 
         self.xml_files = new_xmls
         self.tif_files = new_tifs
-
-        printer.print_blue("=== Completed anonymization for file names within folder: " + self.name)
 
     def _anonymize_file_contents(self):
         """ Cycles through and anonymizes file contents. """
@@ -118,9 +102,7 @@ class Folder(object):
         try:
             for file in next(os.walk(self.absolute_path))[2]:
                 if file.endswith(".xml"):
-                    self.xml_files.append(file)
-                elif file.endswith(".tif"):
-                    self.tif_files.append(file)
-            printer.print_yellow("Identified {} xml file(s) and {} tif file(s).".format(len(self.xml_files), len(self.tif_files)))
+                    self.files.append(file[:-4])
+            printer.print_yellow("Identified {} file(s).".format(len(self.files)))
         except StopIteration:
             printer.print_yellow("No XML files identified.")

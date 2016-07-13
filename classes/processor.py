@@ -30,6 +30,7 @@ class Anonymizer(object):
         self._identify_patient_folders()
         self._identify_files()
         self._patch_folder_names()
+        self._patch_file_names()
 
     def _identify_patient_folders(self):
         """ Identifies patient folders within the Data folder. """
@@ -56,3 +57,9 @@ class Anonymizer(object):
             self.participant_hash.append((folder.name, new_name))   # Store a hash of new and old identifiers.
             folder.anonymize_folder(new_name)
             count = count + 1
+    
+    def _patch_file_names(self):
+        """ Calls for folders to rename any of their files. """
+        printer.print_blue("=== Anonymizing file names")
+        for folder in self.participant_folders:
+            folder._anonymize_file_names(random.randint(1000000, 9999999))
