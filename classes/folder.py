@@ -7,38 +7,48 @@ except Exception as e:
 
 
 class Folder(object):
-    """ A folder object represents a folder potentially containing xml files. """
+    """ A folder object represents a folder containing xml files. """
 
     def __init__(self, abs_path):
-        """ Initializes a Folder object with the given absolute path and empty contents. """
-        contents = abs_path.split('/') # Get a pretty name for the folder.
-        self.name = contents[len(contents) - 1] # This folder's name.
-        self.xml_files = [] # Names of any xml files within this folder.
+        """
+        Initializes a Folder object with the given
+        absolute path and empty contents. """
+        contents = abs_path.split('/')  # Get a pretty name for the folder.
+        self.name = contents[len(contents) - 1]  # This folder's name.
+        self.xml_files = []  # Names of any xml files within this folder.
         self.folders = []   # Folders inside this folder.
         self.absolute_path = abs_path   # Path of this folder.
 
     def _extract_self(self):
         """ Extracts this folder's contents. """
-        print("\033[94m=== Identifying contents for folder: " + self.name + " \033[0m")
-        
+        print("\033[94m=== Identifying contents for folder: " + self.name + "\033[0m")
+
         # Identify XML files.
         print("\033[93m=== Identifying XML files: \033[0m")
         self.xml_files = []
-        for file in next(os.walk(self.absolute_path))[2]:
-            if file.endswith(".xml"):
-                print("=== Found: " + file)
-                self.xml_files.append(file)
-        print("\033[93m=== Identified {} xml file(s).\033[0m".format(len(self.xml_files)))
+        try:
+            for file in next(os.walk(self.absolute_path))[2]:
+                if file.endswith(".xml"):
+                    print("=== Found: " + file)
+                    self.xml_files.append(file)
+            print("\033[93m=== Identified {} xml file(s).\033[0m".format(len(self.xml_files)))
+        except StopIteration:
+            print("\033[93m=== No XML files identified.\033[0m")
 
         # Identify folders.
         print("\033[93m=== Identifying folders: \033[0m")
         self.xml_files = []
-        for folder in next(os.walk(self.absolute_path))[1]:
-            print("=== Found: " + folder)
-            self.folders.append(Folder(self.absolute_path + "\\{}".format(folder)))
-        print("\033[93m=== Identified {} folder(s).\033[0m".format(len(self.folders)))
+        try:
+            for folder in next(os.walk(self.absolute_path))[1]:
+                print("=== Found: " + folder)
+                self.folders.append(Folder(self.absolute_path + "\\{}".format(folder)))
+            print("\033[93m=== Identified {} folder(s).\033[0m".format(len(self.folders)))
 
-        # Extract inner folders.
-        print("\033[93m=== Extracting {} folder(s): \033[0m".format(len(self.folders)))
-        for folder in self.folders:
-            folder._extract_self()
+            # Extract inner folders.
+            print("\033[93m=== Extracting {} folder(s): \033[0m".format(len(self.folders)))
+            for folder in self.folders:
+                folder._extract_self()
+        except StopIteration:
+            print("\033[93m=== No folders identified.\033[0m")
+        
+        print("\033[94m=== Completed identification for folder: " + self.name + "\033[0m")
