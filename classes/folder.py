@@ -30,18 +30,18 @@ class Folder(object):
 
     def _extract_self(self):
         """ Extracts this folder's contents. """
-        printer.print_blue("=== Identifying contents for folder: " + self.name)
+        printer.print_yellow("Identifying files in: " + self.name)
         self.__identify_files()
-        printer.print_blue("=== Completed identification for folder: " + self.name)
+        printer.print_yellow("Completed")
 
     def _anonymize_folder(self):
         """ Anonymizes the name of this folder and invokes its children to do so. """
-        printer.print_blue("=== Anonymizing folder: " + self.name)
+        printer.print_blue("Anonymizing folder: " + self.name)
 
         try:
             # iff this isn't the data folder
             if self.name.endswith("Data"):
-                printer.print_blue("=== Anonymization not needed as this is the data folder!")
+                printer.print_blue("Anonymization not needed as this is the data folder!")
             else:
                 # Get the original path excluding the original file name.
                 old_path = self.absolute_path[:-len(self.name)]
@@ -51,7 +51,7 @@ class Folder(object):
         except OSError:
             printer.print_red("ERROR: Could not rename directory - " + self.name)
 
-        printer.print_blue("=== Completed anonymization of folder: " + self.name)
+        printer.print_blue("Completed anonymization of folder: " + self.name)
 
     def _anonymize_file_names(self):
         """
@@ -121,7 +121,7 @@ class Folder(object):
 
     def __identify_files(self):
         """ Identifies any xml files to be used. """
-        printer.print_yellow("=== Identifying XML files.")
+        printer.print_yellow("Identifying XML files.")
         self.xml_files = []
         try:
             for file in next(os.walk(self.absolute_path))[2]:
@@ -129,6 +129,6 @@ class Folder(object):
                     self.xml_files.append(file)
                 elif file.endswith(".tif"):
                     self.tif_files.append(file)
-            printer.print_yellow("=== Identified {} xml file(s) and {} tif file(s).".format(len(self.xml_files), len(self.tif_files)))
+            printer.print_yellow("Identified {} xml file(s) and {} tif file(s).".format(len(self.xml_files), len(self.tif_files)))
         except StopIteration:
-            printer.print_yellow("=== No XML files identified.")
+            printer.print_yellow("No XML files identified.")
