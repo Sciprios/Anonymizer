@@ -10,7 +10,7 @@ except Exception:
 try:
     import os
 except Exception:
-    printer.print_red("Error loading os module.. Exiting..")
+    printer.print_red("Error loading core modules.. Exiting..")
     exit()
 
 if __name__ == '__main__':  # If this module is being executed.
