@@ -8,7 +8,6 @@ except Exception:
 
 try:
     import os
-    import random
     from xml.etree.ElementTree import parse, Element
 except Exception as e:
     printer.print_red("Error importing 'os' library.. Exiting.")
@@ -32,26 +31,20 @@ class Folder(object):
         """ Extracts this folder's contents. """
         printer.print_yellow("Identifying files in: " + self.name)
         self.__identify_files()
-        printer.print_yellow("Completed")
 
-    def _anonymize_folder(self):
+    def anonymize_folder(self, identifier):
         """ Anonymizes the name of this folder and invokes its children to do so. """
-        printer.print_blue("Anonymizing folder: " + self.name)
+        printer.print_yellow("Anonymizing folder: " + self.name)
 
         try:
-            # iff this isn't the data folder
-            if self.name.endswith("Data"):
-                printer.print_blue("Anonymization not needed as this is the data folder!")
-            else:
-                # Get the original path excluding the original file name.
-                old_path = self.absolute_path[:-len(self.name)]
-                new_path = old_path + str(random.randrange(1000000, 9999999))
-                os.rename(self.absolute_path, new_path)  # Do the rename
-                self.absolute_path = new_path
+            # Get the original path excluding the original file name.
+            old_path = self.absolute_path[:-len(self.name)]
+            new_path = old_path + identifier
+            os.rename(self.absolute_path, new_path)  # Do the rename
+            self.absolute_path = new_path
+            self.name = identifier
         except OSError:
             printer.print_red("ERROR: Could not rename directory - " + self.name)
-
-        printer.print_blue("Completed anonymization of folder: " + self.name)
 
     def _anonymize_file_names(self):
         """
@@ -121,7 +114,6 @@ class Folder(object):
 
     def __identify_files(self):
         """ Identifies any xml files to be used. """
-        printer.print_yellow("Identifying XML files.")
         self.xml_files = []
         try:
             for file in next(os.walk(self.absolute_path))[2]:
