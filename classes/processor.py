@@ -37,20 +37,19 @@ class Anonymizer(object):
             printer.print_blue("=== Identifying participant folders")
             for folder_name in next(os.walk(self.folder_path))[1]:
                 self.participant_folders.append(Folder(self.folder_path + "\\{}".format(folder_name)))
+                printer.print_yellow("Found folder: " + folder_name)
         except StopIteration:
             printer.print_yellow("No participant folders found.")
-        finally:
-            printer.print_blue("=== Identified {} participant folder(s).".format(len(self.participant_folders)))
 
     def _identify_files(self):
         """ Calls Folders to idnntify their files. """
         printer.print_blue("=== Identifying files within folders.")
         for folder in self.participant_folders:
             folder._extract_self()
-        printer.print_blue("=== Finished Identifying files.")
 
     def _patch_folder_names(self):
         """ Calls for folders to change their names. """
+        printer.print_blue("=== Anonymizing folder names")
         count = random.randint(1000000, 9999999)
         for folder in self.participant_folders:
             new_name = self.study + "_{}".format(count)
