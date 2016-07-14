@@ -12,3 +12,5 @@
 2. Place your unzipped data into the 'Data' folder.
 3. Using you bash command line utility enter the repository using: ```cd {where you placed the directory}/Anonymizer```
 4. Run the application using ```python main.py```
+5. After the application is run all partciipant folders will have been anonymized and you will have also been provided with a hash between the old names
+and the new.
