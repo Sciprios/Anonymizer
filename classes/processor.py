@@ -76,6 +76,12 @@ class Anonymizer(object):
     def _output_hash(self):
         """ Outputs the hash of identifiers. """
         printer.print_blue("=== Outputting hash of identifiers")
+        try:
+            os.remove("Data\identifiers.csv")
+        except OSError:
+            printer.print_yellow("No identifiers file to be removed.")
+        finally:
+            printer.print_yellow("Creating identifiers file.")
         with open("Data\identifiers.csv", "ab") as csv_file:
             writer = csv.writer(csv_file, delimiter=",")
             for participant in self.participant_hash:
