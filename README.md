@@ -1,7 +1,8 @@
 # Visual Field Data Anonymizer
 ## Prequisites
+* Windows Machine (Has only been tested on Windows, try others at your own risk.)
 * Python 3.5 (Python 3.x have not been tested but should work.)
-* Data in the appropriate format.
+* Data in the appropriate format. (Data folder containing a folder for each participant.)
 * Bash command line utility. (GitBash recommended.)
 
 ## Instructions
