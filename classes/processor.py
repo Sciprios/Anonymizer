@@ -10,6 +10,7 @@ except Exception:
 try:
     import os
     import random
+    import csv
 except Exception:
     printer.print_red("Error loading core modules.. Exiting..")
     exit()
@@ -32,6 +33,7 @@ class Anonymizer(object):
         self._patch_folder_names()
         self._patch_file_names()
         self._patch_file_content()
+        self._output_hash()
 
     def _identify_patient_folders(self):
         """ Identifies patient folders within the Data folder. """
@@ -58,7 +60,7 @@ class Anonymizer(object):
             self.participant_hash.append((folder.name, new_name))   # Store a hash of new and old identifiers.
             folder.anonymize_folder(new_name)
             count = count + 1
-    
+
     def _patch_file_names(self):
         """ Calls for folders to rename any of their files. """
         printer.print_blue("=== Anonymizing file names")
@@ -70,3 +72,18 @@ class Anonymizer(object):
         printer.print_blue("=== Anonymizing file content")
         for folder in self.participant_folders:
             folder._anonymize_file_contents()
+
+    def _output_hash(self):
+        """ Outputs the hash of identifiers. """
+        printer.print_blue("=== Outputting hash of identifiers")
+        try:
+            os.remove("Data\identifiers.csv")
+            printer.print_yellow("Overwriting identifiers file.")
+        except OSError:
+            printer.print_yellow("No identifiers file to be removed.")
+            printer.print_yellow("Creating identifiers file.")
+        finally:
+            with open("Data\identifiers.csv", "ab") as csv_file:
+                writer = csv.writer(csv_file, delimiter=",")
+                for participant in self.participant_hash:
+                    writer.writerow([participant[0], participant[1]])
