@@ -1,6 +1,5 @@
 """ Module to be executed to anonymize all XML files within the 'Data' folder. """
 try:
-    from classes.folder import Folder
     from classes.colours import ColourPrint
     from classes.processor import Anonymizer
     printer = ColourPrint()
