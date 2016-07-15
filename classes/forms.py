@@ -34,5 +34,4 @@ class MainScreen(Tk):
 
         # Set window dimensions
         geo = str(width) + "x" + str(height) + "+" + str(x)[:-2] + "+" + str(y)[:-2]
-        print(geo)
         self.geometry(geo)

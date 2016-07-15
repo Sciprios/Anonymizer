@@ -1,5 +1,5 @@
 try:
-    from classes.form import MainScreen
+    from classes.forms import MainScreen
 except ImportError:
     print("Could not import classes package, exitting.")
     exit()
