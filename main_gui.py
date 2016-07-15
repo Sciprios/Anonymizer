@@ -1,11 +1,17 @@
 try:
-    from tkinter import Tk
+    from classes.form import MainScreen
 except ImportError:
-    print("Could not import core libraries, exitting.")
+    print("Could not import classes package, exitting.")
     exit()
 
-main_form = Tk()
+try:
+    import os
+except ImportError:
+    print("Could not import core library, exitting.")
+    exit()
+
+main_form = MainScreen()
 main_form.title("Anonymizer")
-main_form.geometry('500x500')
-main_form.resizable(0, 0)
+
+
 main_form.mainloop()
