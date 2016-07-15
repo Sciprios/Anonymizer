@@ -15,6 +15,6 @@ except Exception:
 
 if __name__ == '__main__':  # If this module is being executed.
     # Get study name
-    study = raw_input("Please input a study identifier: ")
+    study = input("Please input a study identifier: ")
     anonimizer = Anonymizer(study, os.getcwd() + "\Data")
     anonimizer.anonymize_data()
