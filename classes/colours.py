@@ -1,4 +1,9 @@
 """ Module containing coloured output methods. """
+try:
+    from colorama import init
+    init()
+except Exception:
+    print("Colourama not installed.")
 
 
 class ColourPrint(object):
