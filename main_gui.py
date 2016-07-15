@@ -13,5 +13,4 @@ except ImportError:
 main_form = MainScreen()
 main_form.title("Anonymizer")
 
-
 main_form.mainloop()

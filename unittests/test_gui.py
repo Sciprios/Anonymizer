@@ -33,10 +33,10 @@ class TestMainScreen(TestCase):
         screen.geometry.assert_called_with("600x600+0+0")
 
     @mock.patch('classes.forms.MainScreen.__init__')
+    @mock.patch('classes.forms.Label.place')
     @mock.patch('classes.forms.Label.__init__')
-    @mock.patch('classes.forms.Label.pack')
     @mock.patch('classes.forms.ImageTk.PhotoImage')
-    def test_set_bg_image(self, pht_img, lbl_pck, lbl_init, ms_init):
+    def test_set_bg_image(self, pht_img, lbl_init, lbl_plc, ms_init):
         """ Tests the method to set the background image. """
         # Mock out some stuff
         ms_init.return_value = None
@@ -44,8 +44,8 @@ class TestMainScreen(TestCase):
         
         screen = MainScreen()
 
-        screen.set_background_image("TEST_PATH")
+        screen.create_background_image("TEST_PATH")
 
         # Check
         pht_img.assert_called_with(file="TEST_PATH")
-        lbl_pck.assert_called_with(side='top', fill='both', expand='yes')
+        lbl_plc.assert_called_with(x=0, y=0, relwidth=1, relheight=1)
