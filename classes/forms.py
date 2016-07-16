@@ -91,13 +91,10 @@ class MainScreen(Tk):
         self.lbl_id.config(text="Identifying participants..")
         self.btn_Folder['state'] = 'disabled'
         self.btn_identify['state'] = 'disabled'
-        folders_thread = Thread(target=self.controller._identify_patient_folders)
-        files_thread = Thread(target=self.controller._identify_files)
-        folders_thread.start()
-        files_thread.start()
+        identify_thread = Thread(target=self.controller._only_identify)
+        identify_thread.start()
 
-        folders_thread.join()
-        files_thread.join()
+        identify_thread.join()
 
         self.lbl_id.config(text="Identifying participants..")
         self.btn_identify['state'] = 'normal'

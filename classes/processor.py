@@ -41,6 +41,11 @@ class Anonymizer(object):
         self._patch_file_names()
         self._patch_file_content()
         # self._output_hash()
+    
+    def _only_identify(self):
+        """ Identifies files and folders. """
+        self._identify_patient_folders()
+        self._identify_files()
 
     def _identify_patient_folders(self):
         """ Identifies patient folders within the Data folder. """
