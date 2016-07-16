@@ -1,5 +1,5 @@
 try:
-    from tkinter import Tk, Label, Button, filedialog
+    from tkinter import Tk, Label, Button, filedialog, Entry
     from PIL import ImageTk
 except ImportError as e:
     print("Could not import core libraries, exitting.")
@@ -9,8 +9,10 @@ except ImportError as e:
 class MainScreen(Tk):
     """ Form on screen."""
 
-    def __init__(self):
+    def __init__(self, anonymizer):
+        """ Instantiates the form on screen with the controller provided. """
         Tk.__init__(self)
+        self.controller = anonymizer
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.resizable(0, 0)
@@ -24,13 +26,21 @@ class MainScreen(Tk):
 
         # Create buttons
         self.btn_Folder = Button(self, text="Select a directory", command=self._btn_folder)
+        self.btn_Folder['state'] = 'disabled'
         self.btn_Folder.place(x=250, y=250)
 
         self.btn_identify = Button(self, text="Identify data", command=self._btn_identify)
+        self.btn_identify['state'] = 'disabled'
         self.btn_identify.place(x=250, y=325)
 
         self.btn_anonymize = Button(self, text="Anonymize data", command=self._btn_anonymize)
+        self.btn_anonymize['state'] = 'disabled'
         self.btn_anonymize.place(x=250, y=400)
+
+        # Text field
+        self.txt_study_name = Entry(self)
+        self.txt_study_name.bind("<Key>", self._validate_txt)
+        self.txt_study_name.place(x=250, y=175)
 
     def create_background_image(self, path):
         """ Sets the background image of this form. """
@@ -59,12 +69,27 @@ class MainScreen(Tk):
     
     def _btn_folder(self):
         """ Executes when btn_Folder is pressed. """
-        filedialog.askdirectory(initialdir='.')
+        self.controller.folder_path = filedialog.askdirectory(initialdir='.')
+        self.btn_identify['state'] = 'normal'
     
     def _btn_identify(self):
         """ Executes when the identify button is pressed. """
-        pass
+        self.controller._identify_patient_folders()
+        self.controller._identify_files()
+        self.btn_anonymize['state'] = 'normal'
     
     def _btn_anonymize(self):
         """ Executes when the anonymize button is pressed. """
-        pass
+        self.controller._patch_folder_names()
+        self.controller._patch_file_names()
+        self.controller._patch_file_content()
+        self.btn_anonymize['state'] = 'disabled'
+
+    def _validate_txt(self, e):
+        """ Validates the study name. """
+        if self.txt_study_name.get().isalnum():
+            self.btn_Folder['state'] = 'normal'
+            return True
+        else:
+            self.btn_Folder['state'] = 'disabled'
+            return False

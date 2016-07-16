@@ -1,5 +1,6 @@
 try:
     from classes.forms import MainScreen
+    from classes.processor import Anonymizer
 except ImportError:
     print("Could not import classes package, exitting.")
     exit()
@@ -10,7 +11,9 @@ except ImportError:
     print("Could not import core library, exitting.")
     exit()
 
-main_form = MainScreen()
+anonymizer = Anonymizer("Nothing")   # Control object
+main_form = MainScreen(anonymizer)    # View object
+
 main_form.title("Anonymizer")
 
 main_form.mainloop()
