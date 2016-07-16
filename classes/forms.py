@@ -38,9 +38,13 @@ class MainScreen(Tk):
         self.btn_anonymize.place(x=250, y=400)
 
         # Text field
-        self.txt_study_name = Entry(self)
+        self.txt_study_name = Entry(self, bg="#668FA7", fg="white")
         self.txt_study_name.bind("<Key>", self._validate_txt)
         self.txt_study_name.place(x=250, y=175)
+
+        # Labels
+        self.lbl_directory = Label(self, bg="white")
+        self.lbl_directory.place(x=375, y=250)
 
     def create_background_image(self, path):
         """ Sets the background image of this form. """
@@ -89,6 +93,7 @@ class MainScreen(Tk):
         """ Validates the study name. """
         if self.txt_study_name.get().isalnum():
             self.btn_Folder['state'] = 'normal'
+            self.controller.study = self.txt_study_name.get()
             return True
         else:
             self.btn_Folder['state'] = 'disabled'
