@@ -1,6 +1,7 @@
 try:
-    from tkinter import Tk, Label, Button, filedialog, Entry
+    from tkinter import Tk, Label, Button, filedialog, Entry, Canvas, messagebox
     from PIL import ImageTk
+    from threading import Thread
 except ImportError as e:
     print("Could not import core libraries, exitting.")
     print(e)
@@ -26,7 +27,7 @@ class MainScreen(Tk):
 
         # Create buttons
         self.btn_Folder = Button(self, text="Select a directory", command=self._btn_folder)
-        self.btn_Folder['state'] = 'disabled'
+        self.btn_Folder['state'] = 'normal'
         self.btn_Folder.place(x=250, y=250)
 
         self.btn_identify = Button(self, text="Identify data", command=self._btn_identify)
@@ -39,7 +40,7 @@ class MainScreen(Tk):
 
         # Text field
         self.txt_study_name = Entry(self, bg="#668FA7", fg="white")
-        self.txt_study_name.bind("<Key>", self._validate_txt)
+        self.txt_study_name.bind("<Key>")
         self.txt_study_name.place(x=250, y=175)
 
         # Labels
@@ -48,6 +49,9 @@ class MainScreen(Tk):
 
         self.lbl_id = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.lbl_id.place(x=375, y=325)
+
+        self.lbl_anon = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
+        self.lbl_anon.place(x=375, y=400)
 
     def create_background_image(self, path):
         """ Sets the background image of this form. """
@@ -77,29 +81,44 @@ class MainScreen(Tk):
     def _btn_folder(self):
         """ Executes when btn_Folder is pressed. """
         self.controller.folder_path = filedialog.askdirectory(initialdir='.')
+        self.btn_Folder['state'] = 'normal'
         self.btn_identify['state'] = 'normal'
+        self.btn_anonymize['state'] = 'disabled'
         self.lbl_directory.config(text=self.controller.folder_path)
     
     def _btn_identify(self):
         """ Executes when the identify button is pressed. """
-        self.controller._identify_patient_folders()
-        self.controller._identify_files()
+        self.lbl_id.config(text="Identifying participants..")
+        self.btn_Folder['state'] = 'disabled'
+        self.btn_identify['state'] = 'disabled'
+        folders_thread = Thread(target=self.controller._identify_patient_folders)
+        files_thread = Thread(target=self.controller._identify_files)
+        folders_thread.start()
+        files_thread.start()
+
+        folders_thread.join()
+        files_thread.join()
+
+        self.lbl_id.config(text="Identifying participants..")
+        self.btn_identify['state'] = 'normal'
         self.btn_anonymize['state'] = 'normal'
+        self.btn_Folder['state'] = 'normal'
         self.lbl_id.config(text="Found {} patient folder(s).".format(len(self.controller.participant_folders)))
     
     def _btn_anonymize(self):
         """ Executes when the anonymize button is pressed. """
-        self.controller._patch_folder_names()
-        self.controller._patch_file_names()
-        self.controller._patch_file_content()
-        self.btn_anonymize['state'] = 'disabled'
-
-    def _validate_txt(self, e):
-        """ Validates the study name. """
-        if self.txt_study_name.get().isalnum():
-            self.btn_Folder['state'] = 'normal'
-            self.controller.study = self.txt_study_name.get()
-            return True
+        if len(self.txt_study_name.get()) == 0:
+            self.lbl_anon.config(text="Please enter a study name..")
+        elif not self.txt_study_name.get().isalnum():
+            self.lbl_anon.config(text="Please enter a valid study name..")
         else:
+            self.lbl_anon.config(text="Anonymizing data..")
             self.btn_Folder['state'] = 'disabled'
-            return False
+            self.btn_identify['state'] = 'disabled'
+            anonymize_thread = Thread(target=self.controller._only_anonymize)
+            anonymize_thread.start()
+            anonymize_thread.join()
+            self.lbl_anon.config(text="Anonymization complete.")
+            self.btn_anonymize['state'] = 'disabled'
+            self.btn_identify['state'] = 'disabled'
+            self.btn_Folder['state'] = 'normal'

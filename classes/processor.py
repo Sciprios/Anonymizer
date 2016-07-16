@@ -11,6 +11,7 @@ try:
     import os
     import random
     import csv
+    from threading import Thread
 except Exception:
     printer.print_red("Error loading core modules.. Exiting..")
     exit()
@@ -34,6 +35,13 @@ class Anonymizer(object):
         self._patch_file_content()
         self._output_hash()
 
+    def _only_anonymize(self):
+        """ Anonymizes the data held without identification. """
+        self._patch_folder_names()
+        self._patch_file_names()
+        self._patch_file_content()
+        # self._output_hash()
+
     def _identify_patient_folders(self):
         """ Identifies patient folders within the Data folder. """
         self.participant_folders = []
@@ -48,6 +56,8 @@ class Anonymizer(object):
     def _identify_files(self):
         """ Calls Folders to idnntify their files. """
         printer.print_blue("=== Identifying files within folders.")
+        patient_total = len(next(os.walk(self.folder_path))[1])
+        count = 0
         for folder in self.participant_folders:
             folder._extract_self()
 
