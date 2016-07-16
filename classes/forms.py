@@ -43,8 +43,11 @@ class MainScreen(Tk):
         self.txt_study_name.place(x=250, y=175)
 
         # Labels
-        self.lbl_directory = Label(self, bg="white")
+        self.lbl_directory = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.lbl_directory.place(x=375, y=250)
+
+        self.lbl_id = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
+        self.lbl_id.place(x=375, y=325)
 
     def create_background_image(self, path):
         """ Sets the background image of this form. """
@@ -75,12 +78,14 @@ class MainScreen(Tk):
         """ Executes when btn_Folder is pressed. """
         self.controller.folder_path = filedialog.askdirectory(initialdir='.')
         self.btn_identify['state'] = 'normal'
+        self.lbl_directory.config(text=self.controller.folder_path)
     
     def _btn_identify(self):
         """ Executes when the identify button is pressed. """
         self.controller._identify_patient_folders()
         self.controller._identify_files()
         self.btn_anonymize['state'] = 'normal'
+        self.lbl_id.config(text="Found {} patient folder(s).".format(len(self.controller.participant_folders)))
     
     def _btn_anonymize(self):
         """ Executes when the anonymize button is pressed. """
