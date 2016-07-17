@@ -29,7 +29,7 @@ class Folder(object):
     def _extract_self(self):
         """ Extracts this folder's contents. """
         printer.print_yellow("Identifying files in: " + self.name)
-        self.__identify_files()
+        self._identify_files()
 
     def anonymize_folder(self, identifier):
         """ Anonymizes the name of this folder and invokes its children to do so. """
@@ -97,7 +97,7 @@ class Folder(object):
             printer.print_red("ERROR: Could not modify file - " + file_name)
             print(e)
 
-    def __identify_files(self):
+    def _identify_files(self):
         """ Identifies any xml files to be used. """
         self.files = []
         try:

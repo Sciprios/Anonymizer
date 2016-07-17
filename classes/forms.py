@@ -17,13 +17,13 @@ class MainScreen(Tk):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.resizable(0, 0)
-        self.center_window(800, 500)
-        self.add_controls()
+        self._center_window(800, 500)
+        self._add_controls()
     
-    def add_controls(self):
+    def _add_controls(self):
         """ Sets up controls on the window. """
         # Background Image
-        self.pnl_background = self.create_background_image("static\\bg_800_500_txt.png")
+        self.pnl_background = self._create_background_image("static\\bg_800_500_txt.png")
 
         # Create buttons
         self.btn_Folder = Button(self, text="Select a directory", command=self._btn_folder)
@@ -53,7 +53,7 @@ class MainScreen(Tk):
         self.lbl_anon = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.lbl_anon.place(x=375, y=400)
 
-    def create_background_image(self, path):
+    def _create_background_image(self, path):
         """ Sets the background image of this form. """
         image = ImageTk.PhotoImage(file = path)
         pnl_background = Label(self, image=image)
@@ -63,7 +63,7 @@ class MainScreen(Tk):
         return pnl_background
         
 
-    def center_window(self, new_width, new_height):
+    def _center_window(self, new_width, new_height):
         """ Centers this form. """
         width = new_width
         height = new_height

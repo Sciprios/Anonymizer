@@ -11,7 +11,6 @@ try:
     import os
     import random
     import csv
-    from threading import Thread
 except Exception:
     printer.print_red("Error loading core modules.. Exiting..")
     exit()

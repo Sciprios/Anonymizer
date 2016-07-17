@@ -10,6 +10,7 @@ try:
     del path
 
     from unittest import mock, TestCase
+    from classes.processor import Anonymizer
     from classes.forms import MainScreen
 
 except Exception:
@@ -21,14 +22,15 @@ class TestMainScreen(TestCase):
 
     def test_center_window(self):
         """ Tests the centering of a window. """
-        screen = MainScreen()
+        anon = Anonymizer("FAKE_STUDY")
+        screen = MainScreen(anon)
 
         # Mock out a bunch of methods required.
         screen.winfo_screenwidth = mock.Mock(return_value=600)
         screen.winfo_screenheight = mock.Mock(return_value=600)
         screen.geometry = mock.Mock()
 
-        screen.center_window(600, 600)
+        screen._center_window(600, 600)
 
         screen.geometry.assert_called_with("600x600+0+0")
 
@@ -44,8 +46,20 @@ class TestMainScreen(TestCase):
         
         screen = MainScreen()
 
-        screen.create_background_image("TEST_PATH")
+        screen._create_background_image("TEST_PATH")
 
         # Check
         pht_img.assert_called_with(file="TEST_PATH")
         lbl_plc.assert_called_with(x=0, y=0, relwidth=1, relheight=1)
+
+    def test_click_btn_folder(self):
+        """ Ensures correct actions are taken upon selecting to choose a folder. """
+        pass
+    
+    def test_click_btn_identify(self):
+        """ Ensures correct actions are taken upon selecting to identify participants. """
+        pass
+    
+    def test_click_btn_anonymize(self):
+        """ Ensures correct actions are taken upon selecting to anonymize data set. """
+        pass
