@@ -21,7 +21,7 @@ class Folder(object):
         """
         Initializes a Folder object with the given
         absolute path and empty contents. """
-        contents = abs_path.split('\\')  # Get a pretty name for the folder.
+        contents = abs_path.split('/')  # Get a pretty name for the folder.
         self.name = contents[len(contents) - 1]  # This folder's name.
         self.files = []  # Names of any xml files within this folder.
         self.absolute_path = abs_path   # Path of this folder.
@@ -29,7 +29,7 @@ class Folder(object):
     def _extract_self(self):
         """ Extracts this folder's contents. """
         printer.print_yellow("Identifying files in: " + self.name)
-        self.__identify_files()
+        self._identify_files()
 
     def anonymize_folder(self, identifier):
         """ Anonymizes the name of this folder and invokes its children to do so. """
@@ -40,10 +40,12 @@ class Folder(object):
             old_path = self.absolute_path[:-len(self.name)]
             new_path = old_path + identifier
             os.rename(self.absolute_path, new_path)  # Do the rename
+            print(new_path)
             self.absolute_path = new_path
             self.name = identifier
-        except OSError:
+        except OSError as e:
             printer.print_red("ERROR: Could not rename directory - " + self.name)
+            print(e)
 
     def _anonymize_file_names(self, seed):
         """
@@ -56,9 +58,9 @@ class Folder(object):
 
         for file_name in self.files:    # Assuming every xml has a tif.
             try:
-                new_location = self.absolute_path + "\\{}_{}".format(self.name, count)
-                os.rename(self.absolute_path + "\\{}.xml".format(file_name), new_location + ".xml")
-                os.rename(self.absolute_path + "\\{}.tif".format(file_name), new_location + ".tif")
+                new_location = self.absolute_path + "/{}_{}".format(self.name, count)
+                os.rename(self.absolute_path + "/{}.xml".format(file_name), new_location + ".xml")
+                os.rename(self.absolute_path + "/{}.tif".format(file_name), new_location + ".tif")
                 new_xmls.append(new_location + ".xml")
                 new_tifs.append(new_location + ".tif")
                 count = count + 1
@@ -95,9 +97,9 @@ class Folder(object):
             printer.print_red("ERROR: Could not modify file - " + file_name)
             print(e)
 
-    def __identify_files(self):
+    def _identify_files(self):
         """ Identifies any xml files to be used. """
-        self.xml_files = []
+        self.files = []
         try:
             for file in next(os.walk(self.absolute_path))[2]:
                 if file.endswith(".xml"):

@@ -18,12 +18,11 @@ except Exception:
 class Anonymizer(object):
     """ Anonymizer object anonymizes any patient folders in the Data folder. """
 
-    def __init__(self, study_name, data_folder_path):
+    def __init__(self, study_name):
         """ Initializes an anonymizer object for the given study. """
         self.study = study_name
         self.participant_folders = []
         self.participant_hash = []
-        self.folder_path = data_folder_path
     
     def anonymize_data(self):
         """ Anonymize the data in the Data folder. """
@@ -35,12 +34,25 @@ class Anonymizer(object):
         self._patch_file_content()
         self._output_hash()
 
+    def _only_anonymize(self):
+        """ Anonymizes the data held without identification. """
+        self._patch_folder_names()
+        self._patch_file_names()
+        self._patch_file_content()
+        # self._output_hash()
+    
+    def _only_identify(self):
+        """ Identifies files and folders. """
+        self._identify_patient_folders()
+        self._identify_files()
+
     def _identify_patient_folders(self):
         """ Identifies patient folders within the Data folder. """
+        self.participant_folders = []
         try:
             printer.print_blue("=== Identifying participant folders")
             for folder_name in next(os.walk(self.folder_path))[1]:
-                self.participant_folders.append(Folder(self.folder_path + "\\{}".format(folder_name)))
+                self.participant_folders.append(Folder(self.folder_path + "/{}".format(folder_name)))
                 printer.print_yellow("Found folder: " + folder_name)
         except StopIteration:
             printer.print_yellow("No participant folders found.")
@@ -48,6 +60,8 @@ class Anonymizer(object):
     def _identify_files(self):
         """ Calls Folders to idnntify their files. """
         printer.print_blue("=== Identifying files within folders.")
+        patient_total = len(next(os.walk(self.folder_path))[1])
+        count = 0
         for folder in self.participant_folders:
             folder._extract_self()
 
@@ -58,6 +72,7 @@ class Anonymizer(object):
         for folder in self.participant_folders:
             new_name = self.study + "_{}".format(count)
             self.participant_hash.append((folder.name, new_name))   # Store a hash of new and old identifiers.
+            print(new_name)
             folder.anonymize_folder(new_name)
             count = count + 1
 
