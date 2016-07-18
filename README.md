@@ -13,3 +13,6 @@
 4. Run the application using ```python main.py```
 5. After the application is run all partciipant folders will have been anonymized and you will have also been provided with a hash between the old names
 and the new.
+
+## Notes
+Any hash files will be created in this directory/Data.
