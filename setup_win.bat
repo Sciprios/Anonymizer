@@ -1,1 +1,1 @@
-python static/setup.py
+python static/setup_win.py
