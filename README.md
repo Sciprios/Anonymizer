@@ -5,11 +5,11 @@
 * Data in the appropriate format. (Data folder containing a folder for each participant.)
 
 ## Instructions
-1. Extract the code by either:
-    * Cloning this git repository using: ```git clone https://github.com/Sciprios/Anonymizer.git```
-    * Downloading and extracting the Zip archive of this repository.
-2. Place your unzipped data into the 'Data' folder.
-3. Using you command line utility enter the repository using: ```cd {where you placed the directory}/Anonymizer```
-4. Run the application using ```python main.py```
-5. After the application is run all partciipant folders will have been anonymized and you will have also been provided with a hash between the old names
-and the new.
+1. Extract the code by:
+    * Downloading and extracting the Zip archive of this repository to a directory most useful for you.
+2. If you are using windows double click the ```setup_win.bat``` file, if you're using linux of Mac double click the ```setup_uni.sh``` file.
+    * This will install all the prerequisite libraries for Python. YOU DO NEED PYTHON BEFORE RUNNING THESE.
+3. Now you are ready to run the application:
+    * Windows: Double click the ```start_win.bat``` file.
+    * Unix (Mac/Linux): Double click the ```start_uni.sh``` file.
+In future runs you will not need to run the setup unless you're using a different computer; also, feel free to create a shortcut to this.
