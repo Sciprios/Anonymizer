@@ -8,4 +8,4 @@ if __name__== '__main__':
         requirements = req_file.readlines()
 
     for requirement in requirements:
-        call(["pip", "install", requirement])
+        call(["sudo", "pip", "install", requirement])
