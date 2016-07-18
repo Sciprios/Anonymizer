@@ -1,0 +1,1 @@
+start pythonw start_gui.py

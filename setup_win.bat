@@ -1,0 +1,1 @@
+python static/setup.py
