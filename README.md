@@ -13,3 +13,6 @@
     * Windows: Double click the ```start_win.bat``` file.
     * Unix (Mac/Linux): Double click the ```start_uni.sh``` file.
 In future runs you will not need to run the setup unless you're using a different computer; also, feel free to create a shortcut to this.
+
+## Notes
+Any hash files will be created in this directory/Data.
