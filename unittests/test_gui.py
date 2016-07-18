@@ -74,7 +74,7 @@ class TestMainScreen(TestCase):
         assert screen.controller.folder_path == "TEST_666"
         screen.lbl_directory.config.assert_called_with(text="TEST_666")
 
-    @mock.patch('classes.forms.Thread')
+    @mock.patch('classes.forms.IdenThread')
     @mock.patch('classes.forms.MainScreen.__init__')
     def test_click_btn_identify(self, ms_ini, thread):
         """ Ensures correct actions are taken upon selecting to identify participants. """
@@ -83,23 +83,14 @@ class TestMainScreen(TestCase):
 
         fake_thread = mock.Mock()
         screen.controller = mock.Mock()
-        screen.controller.participant_folders = [1, 2, 3, 4, 5, 6]
+        screen.controller._only_identify = mock.Mock()
         thread.return_value = fake_thread
-        screen.btn_folder = {}
-        screen.btn_identify = {}
-        screen.btn_anonymize = {}
-        screen.lbl_id = mock.Mock()
 
         screen._btn_identify()
 
-        assert screen.btn_folder['state'] == 'normal'
-        assert screen.btn_identify['state'] == 'normal'
-        assert screen.btn_anonymize['state'] == 'normal'
-        screen.lbl_id.config.assert_called_with(text="Found 6 patient folder(s).")
         assert fake_thread.start.call_count == 1
-        assert fake_thread.join.call_count == 1
 
-    @mock.patch('classes.forms.Thread')
+    @mock.patch('classes.forms.AnonThread')
     @mock.patch('classes.forms.MainScreen.__init__')
     def test_click_btn_anonymize(self, ms_ini, thread):
         """ Ensures correct actions are taken upon selecting to anonymize data set. """
@@ -121,20 +112,13 @@ class TestMainScreen(TestCase):
         screen.lbl_anon.config.assert_called_with(text="Please enter a valid study name..")
 
         # Correct study name
-        screen.txt_study_name.get = mock.Mock(return_value="HappyStudy")
+        study_name = "test"
         screen.controller = mock.Mock()
-        screen.lbl_id = mock.Mock()
+        screen.controller._only_anonymize = mock.Mock()
+        screen.txt_study_name.get = mock.Mock(return_value=study_name)
         fake_thread = mock.Mock()
         thread.return_value = fake_thread
-        screen.btn_folder = {}
-        screen.btn_identify = {}
-        screen.btn_anonymize = {}
 
         screen._btn_anonymize()
 
-        assert screen.btn_folder['state'] == 'normal'
-        assert screen.btn_identify['state'] == 'disabled'
-        assert screen.btn_anonymize['state'] == 'disabled'
-        screen.lbl_anon.config.assert_called_with(text="Anonymization complete.")
-        assert fake_thread.start.call_count == 1
-        assert fake_thread.join.call_count == 1
+        assert thread.return_value.start.call_count == 1
