@@ -103,5 +103,6 @@ class MainScreen(Tk):
         elif not self.txt_study_name.get().isalnum():
             self.lbl_anon.config(text="Please enter a valid study name..")
         else:
+            self.controller.study = self.txt_study_name.get()
             anonymize_thread = AnonThread(target=self.controller._only_anonymize, gui=self)
             anonymize_thread.start()
