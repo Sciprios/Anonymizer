@@ -1,11 +1,12 @@
 try:
-    from tkinter import Tk, Label, Button, filedialog, Entry, Canvas, messagebox
+    from tkinter import Tk, Label, Button, filedialog, Entry
     from PIL import ImageTk
     from threading import Thread
 except ImportError as e:
     print("Could not import core libraries, exitting.")
     print(e)
     exit()
+
 
 class MainScreen(Tk):
     """ Form on screen."""
@@ -19,7 +20,7 @@ class MainScreen(Tk):
         self.resizable(0, 0)
         self._center_window(800, 500)
         self._add_controls()
-    
+
     def _add_controls(self):
         """ Sets up controls on the window. """
         # Background Image
@@ -55,13 +56,12 @@ class MainScreen(Tk):
 
     def _create_background_image(self, path):
         """ Sets the background image of this form. """
-        image = ImageTk.PhotoImage(file = path)
+        image = ImageTk.PhotoImage(file=path)
         pnl_background = Label(self, image=image)
         pnl_background.image = image
         pnl_background.place(x=0, y=0, relwidth=1, relheight=1)
 
         return pnl_background
-        
 
     def _center_window(self, new_width, new_height):
         """ Centers this form. """
@@ -77,15 +77,19 @@ class MainScreen(Tk):
         # Set window dimensions
         geo = str(width) + "x" + str(height) + "+" + str(x)[:-2] + "+" + str(y)[:-2]
         self.geometry(geo)
-    
+
+    def _get_folder(self):   # pragma: no cover
+        """ Returns a user selected folder which contains the data. """
+        return filedialog.askdirectory(initialdir='.')
+
     def _btn_folder(self):
         """ Executes when btn_folder is pressed. """
-        self.controller.folder_path = filedialog.askdirectory(initialdir='.')
+        self.controller.folder_path = self._get_folder()
         self.btn_folder['state'] = 'normal'
         self.btn_identify['state'] = 'normal'
         self.btn_anonymize['state'] = 'disabled'
         self.lbl_directory.config(text=self.controller.folder_path)
-    
+
     def _btn_identify(self):
         """ Executes when the identify button is pressed. """
         self.lbl_id.config(text="Identifying participants..")
@@ -96,12 +100,11 @@ class MainScreen(Tk):
 
         identify_thread.join()
 
-        self.lbl_id.config(text="Identifying participants..")
         self.btn_identify['state'] = 'normal'
         self.btn_anonymize['state'] = 'normal'
         self.btn_folder['state'] = 'normal'
         self.lbl_id.config(text="Found {} patient folder(s).".format(len(self.controller.participant_folders)))
-    
+
     def _btn_anonymize(self):
         """ Executes when the anonymize button is pressed. """
         if len(self.txt_study_name.get()) == 0:
