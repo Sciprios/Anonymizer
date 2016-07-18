@@ -1,5 +1,6 @@
 try:
     from tkinter import Tk, Label, Button, filedialog, Entry
+    from classes.threads import AnonThread, IdenThread
     from PIL import ImageTk
     from threading import Thread
 except ImportError as e:
@@ -92,18 +93,8 @@ class MainScreen(Tk):
 
     def _btn_identify(self):
         """ Executes when the identify button is pressed. """
-        self.lbl_id.config(text="Identifying participants..")
-        self.btn_folder['state'] = 'disabled'
-        self.btn_identify['state'] = 'disabled'
-        identify_thread = Thread(target=self.controller._only_identify)
+        identify_thread = IdenThread(target=self.controller._only_identify, gui=self)
         identify_thread.start()
-
-        identify_thread.join()
-
-        self.btn_identify['state'] = 'normal'
-        self.btn_anonymize['state'] = 'normal'
-        self.btn_folder['state'] = 'normal'
-        self.lbl_id.config(text="Found {} patient folder(s).".format(len(self.controller.participant_folders)))
 
     def _btn_anonymize(self):
         """ Executes when the anonymize button is pressed. """
@@ -112,13 +103,5 @@ class MainScreen(Tk):
         elif not self.txt_study_name.get().isalnum():
             self.lbl_anon.config(text="Please enter a valid study name..")
         else:
-            self.lbl_anon.config(text="Anonymizing data..")
-            self.btn_folder['state'] = 'disabled'
-            self.btn_identify['state'] = 'disabled'
-            anonymize_thread = Thread(target=self.controller._only_anonymize)
+            anonymize_thread = AnonThread(target=self.controller._only_anonymize, gui=self)
             anonymize_thread.start()
-            anonymize_thread.join()
-            self.lbl_anon.config(text="Anonymization complete.")
-            self.btn_anonymize['state'] = 'disabled'
-            self.btn_identify['state'] = 'disabled'
-            self.btn_folder['state'] = 'normal'
