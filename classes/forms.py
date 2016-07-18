@@ -2,7 +2,6 @@ try:
     from tkinter import Tk, Label, Button, filedialog, Entry
     from classes.threads import AnonThread, IdenThread
     from PIL import ImageTk
-    from threading import Thread
 except ImportError as e:
     print("Could not import core libraries, exitting.")
     print(e)
