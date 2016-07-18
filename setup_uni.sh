@@ -1,2 +1,2 @@
 #!/bin/bash
-python setup.py
+python static/setup.py
