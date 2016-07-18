@@ -40,7 +40,6 @@ class Folder(object):
             old_path = self.absolute_path[:-len(self.name)]
             new_path = old_path + identifier
             os.rename(self.absolute_path, new_path)  # Do the rename
-            print(new_path)
             self.absolute_path = new_path
             self.name = identifier
         except OSError as e:
