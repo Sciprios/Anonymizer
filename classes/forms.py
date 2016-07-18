@@ -26,9 +26,9 @@ class MainScreen(Tk):
         self.pnl_background = self._create_background_image("static\\bg_800_500_txt.png")
 
         # Create buttons
-        self.btn_Folder = Button(self, text="Select a directory", command=self._btn_folder)
-        self.btn_Folder['state'] = 'normal'
-        self.btn_Folder.place(x=250, y=250)
+        self.btn_folder = Button(self, text="Select a directory", command=self._btn_folder)
+        self.btn_folder['state'] = 'normal'
+        self.btn_folder.place(x=250, y=250)
 
         self.btn_identify = Button(self, text="Identify data", command=self._btn_identify)
         self.btn_identify['state'] = 'disabled'
@@ -45,13 +45,13 @@ class MainScreen(Tk):
 
         # Labels
         self.lbl_directory = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
-        self.lbl_directory.place(x=375, y=250)
+        self.lbl_directory.place(x=400, y=250)
 
         self.lbl_id = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
-        self.lbl_id.place(x=375, y=325)
+        self.lbl_id.place(x=400, y=325)
 
         self.lbl_anon = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
-        self.lbl_anon.place(x=375, y=400)
+        self.lbl_anon.place(x=400, y=400)
 
     def _create_background_image(self, path):
         """ Sets the background image of this form. """
@@ -79,9 +79,9 @@ class MainScreen(Tk):
         self.geometry(geo)
     
     def _btn_folder(self):
-        """ Executes when btn_Folder is pressed. """
+        """ Executes when btn_folder is pressed. """
         self.controller.folder_path = filedialog.askdirectory(initialdir='.')
-        self.btn_Folder['state'] = 'normal'
+        self.btn_folder['state'] = 'normal'
         self.btn_identify['state'] = 'normal'
         self.btn_anonymize['state'] = 'disabled'
         self.lbl_directory.config(text=self.controller.folder_path)
@@ -89,7 +89,7 @@ class MainScreen(Tk):
     def _btn_identify(self):
         """ Executes when the identify button is pressed. """
         self.lbl_id.config(text="Identifying participants..")
-        self.btn_Folder['state'] = 'disabled'
+        self.btn_folder['state'] = 'disabled'
         self.btn_identify['state'] = 'disabled'
         identify_thread = Thread(target=self.controller._only_identify)
         identify_thread.start()
@@ -99,7 +99,7 @@ class MainScreen(Tk):
         self.lbl_id.config(text="Identifying participants..")
         self.btn_identify['state'] = 'normal'
         self.btn_anonymize['state'] = 'normal'
-        self.btn_Folder['state'] = 'normal'
+        self.btn_folder['state'] = 'normal'
         self.lbl_id.config(text="Found {} patient folder(s).".format(len(self.controller.participant_folders)))
     
     def _btn_anonymize(self):
@@ -110,7 +110,7 @@ class MainScreen(Tk):
             self.lbl_anon.config(text="Please enter a valid study name..")
         else:
             self.lbl_anon.config(text="Anonymizing data..")
-            self.btn_Folder['state'] = 'disabled'
+            self.btn_folder['state'] = 'disabled'
             self.btn_identify['state'] = 'disabled'
             anonymize_thread = Thread(target=self.controller._only_anonymize)
             anonymize_thread.start()
@@ -118,4 +118,4 @@ class MainScreen(Tk):
             self.lbl_anon.config(text="Anonymization complete.")
             self.btn_anonymize['state'] = 'disabled'
             self.btn_identify['state'] = 'disabled'
-            self.btn_Folder['state'] = 'normal'
+            self.btn_folder['state'] = 'normal'
