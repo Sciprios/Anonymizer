@@ -79,15 +79,19 @@ class Folder(object):
     def _anonymize_file(self, file_path):
         """ Anonymizes the file name. """
         try:
+            file_name = "oh no"
+            contents = file_path.split('/')
+            file_name = contents[len(contents) - 1][:-4]
+            study_name = file_name.split('_')[0]
             doc = parse(file_path)
             root_node = doc.getroot()
             patient_node = root_node.find("PATIENT")
-            patient_node.find("LAST_NAME").text = ""
+            patient_node.find("LAST_NAME").text = study_name
             patient_node.find("GIVEN_NAME").text = ""
             patient_node.find("MIDDLE_NAME").text = ""
             patient_node.find("NAME_PREFIX").text = ""
             patient_node.find("NAME_SUFFIX").text = ""
-            patient_node.find("FULL_NAME").text = ""
+            patient_node.find("FULL_NAME").text = file_name
             patient_node.find("PATIENT_ID").text = ""
             patient_node.find("BIRTH_DATE").text = patient_node.find("BIRTH_DATE").text[:-6] + "-01-01"
 
