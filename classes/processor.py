@@ -39,6 +39,7 @@ class Anonymizer(object):
         self._patch_folder_names()
         self._patch_file_names()
         self._patch_file_content()
+        self._output_hash()
 
     def _only_identify(self):
         """ Identifies files and folders. """
