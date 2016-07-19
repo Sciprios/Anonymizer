@@ -2,6 +2,7 @@ try:
     from tkinter import Tk, Label, Button, filedialog, Entry
     from classes.threads import AnonThread, IdenThread
     from PIL import ImageTk
+    import os
 except ImportError as e:
     print("Could not import core libraries, exitting.")
     print(e)
@@ -53,6 +54,10 @@ class MainScreen(Tk):
 
         self.lbl_anon = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.lbl_anon.place(x=400, y=400)
+
+        self.lbl_csv_dir = Label(self, bg="white", fg="white", font=("Courier", 11))
+        self.lbl_csv_dir.config(text="Hash: {}/Data/identifiers.csv".format(str(os.getcwd())))
+        self.lbl_csv_dir.place(x=200, y=440)
 
     def _create_background_image(self, path):
         """ Sets the background image of this form. """
