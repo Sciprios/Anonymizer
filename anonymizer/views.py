@@ -6,9 +6,11 @@ from controllers import Observer
 class MainForm(Tk, Observer):
     """ Defines a form object based from Tk in tkinter. """
 
-    def __init__(self, ctrl_obj):
+    def __init__(self, controller):
         """ Initializes the control object and controls of the form. """
-        self.ctrl_anon = ctrl_obj
+        Tk.__init__(self)
+        Observer.__init__(self)
+        self.ctrl_anon = controller
         self.resizable(0, 0)
         self._center_window(800, 500)
         self._reset_controls()

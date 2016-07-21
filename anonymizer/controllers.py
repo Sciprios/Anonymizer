@@ -39,6 +39,7 @@ class ControlAnonymizer(Subject):
 
     def __init__(self):
         """ Initializes the gui and the relevant threads. """
+        Subject.__init__(self)
         self._gui = MainForm(self)
         self._id_thread = None
         self._anon_thread = None
@@ -58,7 +59,12 @@ class ControlAnonymizer(Subject):
         """ Anonymizes the folders and files. """
         num_participants = len(os.listdir(data_location))
         for folder in self._folders:
-            folder.anonymize()
+            folder.anonymize(study, len(self._folders))
+            # Add to hash file
+            with open("identifiers.csv", "a") as csv_file:
+                writer = csv.writer(csv_file, delimiter=",")
+                for participant in self.participant_hash:
+                    writer.writerow([participant[0], participant[1]])
             self.anon_progress = (len(self._folders) / num_participants) * 100
             super(Subject, self).notify_observers()
         
@@ -85,6 +91,11 @@ class ControlAnonymizer(Subject):
     def reset(self):
         """ Resets currently held data. """
         self._folders = []
+        self._name_hash = []
         self.id_progress = 0
         self.anon_progress = 0
+        try:
+            os.remove("identifiers.csv")
+        except OSError:
+            print("Nothing to remove..")
         super(Subject, self).notify_observers()
