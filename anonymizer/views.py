@@ -6,11 +6,11 @@ from controllers import Observer
 class MainForm(Tk, Observer):
     """ Defines a form object based from Tk in tkinter. """
 
-    def __init__(self, controller):
+    def __init__(self):
         """ Initializes the control object and controls of the form. """
         Tk.__init__(self)
         Observer.__init__(self)
-        self.ctrl_anon = controller
+        self.ctrl_anon = None
         self.resizable(0, 0)
         self._center_window(800, 500)
         self._reset_controls()
@@ -88,3 +88,8 @@ class MainForm(Tk, Observer):
             self.lbl_id.config(text="Anonymization compelete")
         else:
             self.lbl_anon.config(text="Anonymization in progress..")
+
+    def add_controller(self, control_anon):
+        """ Adds a control anonymizer object to this gui. """
+        self.ctrl_anon = control_anon
+        self.ctrl_anon.subscribe(self)

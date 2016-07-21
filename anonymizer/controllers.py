@@ -1,5 +1,4 @@
-from views import MainForm
-from models import Folder
+from anonymizer.models import Folder
 from threading import Thread
 import os
 
@@ -37,10 +36,10 @@ class Observer(object):
 class ControlAnonymizer(Subject):
     """ Defines a control object for the naonymization process. """
 
-    def __init__(self):
+    def __init__(self, gui):
         """ Initializes the gui and the relevant threads. """
         Subject.__init__(self)
-        self._gui = MainForm(self)
+        self._gui = gui
         self._id_thread = None
         self._anon_thread = None
         self.id_progress = 0
