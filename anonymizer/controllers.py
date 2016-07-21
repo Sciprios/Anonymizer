@@ -42,8 +42,8 @@ class ControlAnonymizer(Subject):
         self._gui = MainForm(self)
         self._id_thread = None
         self._anon_thread = None
-        self._id_progress = 0
-        self._anon_progress = 0
+        self.id_progress = 0
+        self.anon_progress = 0
         self._folders = []
     
     def start(self):
@@ -59,7 +59,7 @@ class ControlAnonymizer(Subject):
         num_participants = len(os.listdir(data_location))
         for folder in self._folders:
             folder.anonymize()
-            self._anon_progress = (len(self._folders) / num_participants) * 100
+            self.anon_progress = (len(self._folders) / num_participants) * 100
             super(Subject, self).notify_observers()
         
     def identify(self, data_location):
@@ -79,11 +79,12 @@ class ControlAnonymizer(Subject):
                 new_folder.add_file(data_location + "/" + dir_name + "/" + file) 
 
             # Update observers
-            self._id_progress = (len(self._folders) / num_participants) * 100
+            self.id_progress = (len(self._folders) / num_participants) * 100
             super(Subject, self).notify_observers()
     
     def reset(self):
         """ Resets currently held data. """
         self._folders = []
-        self._id_progress = 0
-        self._anon_progress = 0
+        self.id_progress = 0
+        self.anon_progress = 0
+        super(Subject, self).notify_observers()

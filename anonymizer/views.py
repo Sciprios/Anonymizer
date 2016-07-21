@@ -19,6 +19,7 @@ class MainForm(Tk, Observer):
         
         # Initialize controls
         self.lbl_bg = Label(self, image=image)
+        self.lbl_dir = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.lbl_anon = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.lbl_id = Label(self, bg="white", fg="#668FA7", font=("Courier", 14))
         self.btn_dir_select = Button(self, text="Select data folder", command=self._btn_dir_press)
@@ -45,3 +46,43 @@ class MainForm(Tk, Observer):
         self.btn_anon['state'] = "disabled"
         self.prg_id['maximum'] = 100
         self.prg_anon['maximum'] = 100
+
+    def _btn_dir_press(self):
+        """ Allows user to select their data folder. """
+        self.ctrl_anon.reset()
+        dir = filedialog.askdirectory(initialdir='.')
+        if len(dir) > 0:
+            self.lbl_dir.config(text=dir)
+            self.btn_id['state'] = "enabled"
+            self.btn_anon['state'] = "disabled"
+        else:
+            self.btn_id['state'] = "disabled"
+            self.btn_anon['state'] = "disabled"
+    
+    def _btn_id_press(self):
+        """ Calls the controller to identify data set. """
+        self.ctrl_anon.identify(self.lbl_dir['text'])
+        self.btn_anon['state'] = "enabled"
+    
+    def _btn_anon_press(self):
+        """ Calls the controller to anonymize the data set. """
+        if len(self.self.tb_study.get().get()) == 0:
+            self.lbl_anon.config(text="Please enter a study name..")
+        elif not self.self.tb_study.get().get().isalnum():
+            self.lbl_anon.config(text="Please enter a valid study name..")
+        else:
+            self.ctrl_anon.anonymize(self.tb_study.get(), self.lbl_dir['text'])
+    
+    def notify(self):
+        """ Updates the progress of the anonymization and identification processes. """
+        self.prg_id['value'] = self.ctrl_anon.id_progress
+        if self.prg_id['value'] == 100:
+            self.lbl_id.config(text="Identification compelete")
+        else:
+            self.lbl_id.config(text="Identification in progress..")
+        
+        self.prg_anon['value'] = self.ctrl_anon.anon_progress
+        if self.prg_anon['value'] == 100:
+            self.lbl_id.config(text="Anonymization compelete")
+        else:
+            self.lbl_anon.config(text="Anonymization in progress..")
