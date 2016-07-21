@@ -1,1 +1,0 @@
-python static/setup_win.py
