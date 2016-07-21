@@ -57,12 +57,12 @@ class Folder(object):
 
         for file_name in self.files:    # Assuming every xml has a tif.
             try:
+                count = count + 1
                 new_location = self.absolute_path + "/{}_{}".format(self.name, count)
                 os.rename(self.absolute_path + "/{}.xml".format(file_name), new_location + ".xml")
                 os.rename(self.absolute_path + "/{}.tif".format(file_name), new_location + ".tif")
                 new_xmls.append(new_location + ".xml")
                 new_tifs.append(new_location + ".tif")
-                count = count + 1
             except OSError as e:
                 print(e)
                 printer.print_red("ERROR: Could not rename a file within {}: {}".format(self.name, file_name))
