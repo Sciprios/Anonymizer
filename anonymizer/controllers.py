@@ -1,6 +1,7 @@
-from anonymizer.models import Folder
+from models import Folder, File
 from threading import Thread
 import os
+import csv
 
 
 class Subject(object):
@@ -48,44 +49,54 @@ class ControlAnonymizer(Subject):
     
     def start(self):
         """ Starts the gui. """
-        self._gui.main_loop()
+        self._gui.mainloop()
     
     def anonymize(self, study, data_location):
         """ Starts a thread to anonymize the data. """
         self._anon_thread = Thread(target=self._anonymize, args=[study, data_location])
-    
+        self._anon_thread.start()
+
     def _anonymize(self, study, data_location):
         """ Anonymizes the folders and files. """
         num_participants = len(os.listdir(data_location))
+        count = 0
         for folder in self._folders:
-            folder.anonymize(study, len(self._folders))
+            new_name = folder.anonymize(study, count)
             # Add to hash file
             with open("identifiers.csv", "a") as csv_file:
                 writer = csv.writer(csv_file, delimiter=",")
-                for participant in self.participant_hash:
-                    writer.writerow([participant[0], participant[1]])
+                writer.writerow([folder, new_name])
             self.anon_progress = (len(self._folders) / num_participants) * 100
-            super(Subject, self).notify_observers()
+            self.notify_observers()
+            count = count + 1
         
     def identify(self, data_location):
         """ Launches a thread to identify folders and files. """
         self._id_thread = Thread(target=self._identify, args=[data_location])
-        
+        self._id_thread.start()
     
     def _identify(self, data_location):
         """ Identifies files and folders within the data set. """
-        num_participants = len(os.listdir(data_location))
-        for dir_name in next(os.walk(data_location))[1]:
-            new_folder = Folder(data_location + "/" + dir_name)
-            self._folders.append(new_folder)
+        try:
+            num_participants = len(os.listdir(data_location))
+            for dir_name in next(os.walk(data_location))[1]:
+                fld_dir = data_location + "/" + dir_name
+                new_folder = Folder(fld_dir)
+                self._folders.append(new_folder)
 
-            # Extract files
-            for file in next(os.walk(self.absolute_path))[2]:
-                new_folder.add_file(data_location + "/" + dir_name + "/" + file) 
-
-            # Update observers
-            self.id_progress = (len(self._folders) / num_participants) * 100
-            super(Subject, self).notify_observers()
+                try:
+                    # Extract files
+                    for file in next(os.walk(fld_dir))[2]:
+                        new_folder.add_file(File(fld_dir + "/" + file))
+                except Exception as e:
+                    print(e)
+                
+                # Update observers
+                self.id_progress = (len(self._folders) / num_participants) * 100
+                self.notify_observers()
+        except OSError as e:
+            print(e)
+        
     
     def reset(self):
         """ Resets currently held data. """
@@ -97,4 +108,4 @@ class ControlAnonymizer(Subject):
             os.remove("identifiers.csv")
         except OSError:
             print("Nothing to remove..")
-        super(Subject, self).notify_observers()
+        self.notify_observers()

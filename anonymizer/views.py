@@ -12,12 +12,25 @@ class MainForm(Tk, Observer):
         Observer.__init__(self)
         self.ctrl_anon = None
         self.resizable(0, 0)
-        self._center_window(800, 500)
         self._reset_controls()
+
+        # Center window
+        width = 800
+        height = 500
+        scr_width = self.winfo_screenwidth()
+        scr_height = self.winfo_screenheight()
+
+        # Calculate dimensions
+        x = (scr_width/2) - (width/2)
+        y = (scr_height/2) - (height/2)
+
+        # Set window dimensions
+        geo = str(width) + "x" + str(height) + "+" + str(x)[:-2] + "+" + str(y)[:-2]
+        self.geometry(geo)
     
     def _reset_controls(self):
         """ Resets the controls on the form. """
-        image = ImageTk.PhotoImage("bg.png")
+        image = ImageTk.PhotoImage(file="bg.png")
         
         # Initialize controls
         self.lbl_bg = Label(self, image=image)
@@ -55,7 +68,7 @@ class MainForm(Tk, Observer):
         dir = filedialog.askdirectory(initialdir='.')
         if len(dir) > 0:
             self.lbl_dir.config(text=dir)
-            self.btn_id['state'] = "enabled"
+            self.btn_id['state'] = "active"
             self.btn_anon['state'] = "disabled"
         else:
             self.btn_id['state'] = "disabled"
@@ -64,13 +77,13 @@ class MainForm(Tk, Observer):
     def _btn_id_press(self):
         """ Calls the controller to identify data set. """
         self.ctrl_anon.identify(self.lbl_dir['text'])
-        self.btn_anon['state'] = "enabled"
+        self.btn_anon['state'] = "active"
     
     def _btn_anon_press(self):
         """ Calls the controller to anonymize the data set. """
-        if len(self.self.tb_study.get().get()) == 0:
+        if len(self.tb_study.get()) == 0:
             self.lbl_anon.config(text="Please enter a study name..")
-        elif not self.self.tb_study.get().get().isalnum():
+        elif not self.tb_study.get().isalnum():
             self.lbl_anon.config(text="Please enter a valid study name..")
         else:
             self.ctrl_anon.anonymize(self.tb_study.get(), self.lbl_dir['text'])
@@ -80,15 +93,15 @@ class MainForm(Tk, Observer):
         self.prg_id['value'] = self.ctrl_anon.id_progress
         if self.prg_id['value'] == 100:
             self.lbl_id.config(text="Identification compelete")
-        else:
+        elif self.prg_id['value'] > 0:
             self.lbl_id.config(text="Identification in progress..")
         
         self.prg_anon['value'] = self.ctrl_anon.anon_progress
         if self.prg_anon['value'] == 100:
             self.lbl_id.config(text="Anonymization compelete")
-        else:
+        elif self.prg_anon['value'] > 0:
             self.lbl_anon.config(text="Anonymization in progress..")
-
+        
     def add_controller(self, control_anon):
         """ Adds a control anonymizer object to this gui. """
         self.ctrl_anon = control_anon
