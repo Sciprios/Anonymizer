@@ -1,5 +1,8 @@
 from views import MainForm
+from models import Folder
 from threading import Thread
+import os
+
 
 class Subject(object):
     """ Defines an object which can be listened to. """
@@ -36,6 +39,51 @@ class ControlAnonymizer(Subject):
 
     def __init__(self):
         """ Initializes the gui and the relevant threads. """
-        self._gui = MainForm()
-        self._id_thread = Thread(target=self.identify)
-        self._anon_thread = Thread(target=self.anonymize)
+        self._gui = MainForm(self)
+        self._id_thread = None
+        self._anon_thread = None
+        self._id_progress = 0
+        self._anon_progress = 0
+        self._folders = []
+    
+    def start(self):
+        """ Starts the gui. """
+        self._gui.main_loop()
+    
+    def anonymize(self, study, data_location):
+        """ Starts a thread to anonymize the data. """
+        self._anon_thread = Thread(target=self._anonymize, args=[study, data_location])
+    
+    def _anonymize(self, study, data_location):
+        """ Anonymizes the folders and files. """
+        num_participants = len(os.listdir(data_location))
+        for folder in self._folders:
+            folder.anonymize()
+            self._anon_progress = (len(self._folders) / num_participants) * 100
+            super(Subject, self).notify_observers()
+        
+    def identify(self, data_location):
+        """ Launches a thread to identify folders and files. """
+        self._id_thread = Thread(target=self._identify, args=[data_location])
+        
+    
+    def _identify(self, data_location):
+        """ Identifies files and folders within the data set. """
+        num_participants = len(os.listdir(data_location))
+        for dir_name in next(os.walk(data_location))[1]:
+            new_folder = Folder(data_location + "/" + dir_name)
+            self._folders.append(new_folder)
+
+            # Extract files
+            for file in next(os.walk(self.absolute_path))[2]:
+                new_folder.add_file(data_location + "/" + dir_name + "/" + file) 
+
+            # Update observers
+            self._id_progress = (len(self._folders) / num_participants) * 100
+            super(Subject, self).notify_observers()
+    
+    def reset(self):
+        """ Resets currently held data. """
+        self._folders = []
+        self._id_progress = 0
+        self._anon_progress = 0
