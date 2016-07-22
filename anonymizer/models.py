@@ -86,14 +86,22 @@ class File(SystemLocation):
                 doc.write(self._path)
             except Exception as e:
                 print(e)
+            
+            # Rename file
+            try:
+                os.rename(self._path, new_path)
+                self._path = new_path
+            except OSError as e:
+                pass
         elif self._path.endswith(".tif"):
             new_path = prev_path + new_name + ".tif"
+            # Rename file
+            try:
+                os.rename(self._path, new_path)
+                self._path = new_path
+            except OSError as e:
+                pass
         else:
             print(self._path)
 
-        # Rename file
-        try:
-            os.rename(self._path, new_path)
-            self._path = new_path
-        except OSError as e:
-            pass
+        
