@@ -1,1 +1,2 @@
-start pythonw start_gui.py
+cd anonymizer
+start pythonw start.py
