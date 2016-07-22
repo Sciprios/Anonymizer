@@ -72,6 +72,8 @@ class ControlAnonymizer(Subject):
             count = count + 1
             self.anon_progress = (count / num_participants) * 100
             self.notify_observers()
+        self.anon_progress = 100
+        self.notify_observers()
         
     def identify(self, data_location):
         """ Launches a thread to identify folders and files. """
@@ -97,6 +99,8 @@ class ControlAnonymizer(Subject):
                 # Update observers
                 self.id_progress = (len(self._folders) / num_participants) * 100
                 self.notify_observers()
+            self.id_progress = 100
+            self.notify_observers()
         except OSError as e:
             print(e)
         
