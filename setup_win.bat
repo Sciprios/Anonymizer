@@ -1,1 +1,2 @@
-python static/setup_win.py
+cd anonymizer
+start python setup_win.py
