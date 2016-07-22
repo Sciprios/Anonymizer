@@ -61,14 +61,17 @@ class ControlAnonymizer(Subject):
         num_participants = len(os.listdir(data_location))
         count = 0
         for folder in self._folders:
+            split_path = folder._path.split('/')
+            cur_name = split_path[len(split_path) - 1]
             new_name = folder.anonymize(study, count)
+
             # Add to hash file
             with open("identifiers.csv", "a") as csv_file:
                 writer = csv.writer(csv_file, delimiter=",")
-                writer.writerow([folder, new_name])
-            self.anon_progress = (len(self._folders) / num_participants) * 100
-            self.notify_observers()
+                writer.writerow([cur_name, new_name])
             count = count + 1
+            self.anon_progress = (count / num_participants) * 100
+            self.notify_observers()
         
     def identify(self, data_location):
         """ Launches a thread to identify folders and files. """

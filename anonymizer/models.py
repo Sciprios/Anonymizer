@@ -60,7 +60,6 @@ class File(SystemLocation):
     def __init__(self, path):
         """ Initializes parent class. """
         SystemLocation.__init__(self, path)
-        print(path)
 
     def anonymize(self, folder_name, file_num):
         """ Anonymizes this file and its contents. """

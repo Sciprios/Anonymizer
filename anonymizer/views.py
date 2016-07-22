@@ -98,7 +98,7 @@ class MainForm(Tk, Observer):
         
         self.prg_anon['value'] = self.ctrl_anon.anon_progress
         if self.prg_anon['value'] == 100:
-            self.lbl_id.config(text="Anonymization compelete")
+            self.lbl_anon.config(text="Anonymization compelete")
         elif self.prg_anon['value'] > 0:
             self.lbl_anon.config(text="Anonymization in progress..")
         
